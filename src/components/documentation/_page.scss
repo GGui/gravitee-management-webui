@@ -50,4 +50,62 @@
   ul {
     list-style-type: disc;
   }
+
+  p.box {
+    padding: 1.25rem 1.25rem 1.25rem 2.5rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid #eee;
+    border-left-width: .25rem;
+    border-radius: .25rem;
+  }
+}
+
+
+
+markdown-page 
+
+.markdown-page p.tip {
+  border-left: 4px solid #004085;
+/*  border-left: 4px solid var(--theme-color,#f7810e);*/
+/*  background-color: #cce5ff;*/
+}
+
+.markdown-page p.tip strong, p.tip h2, p.tip h3 {
+  color: #004085;
+}
+
+.markdown-page p.warn {
+  border-left: 4px solid #f0ad4e;
+}
+
+.markdown-page p.warn strong, p.warn h2, p.warn h3 {
+  color: #f0ad4e;
+}
+
+.markdown-page p.alert {
+  position: relative;
+  border-left: 4px solid #dc3545;
+}
+
+.markdown-page p.alert strong, p.alert h2, p.alert h3 {
+  color: #721c24;
+}
+
+.markdown-page p.alert:before {
+  background-color: #dc3545;
+  border-radius: 100%;
+  color: #fff;
+  content: '!';
+  font-family: 'Dosis', 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  left: -12px;
+  line-height: 20px;
+  position: absolute;
+  size: 20px;
+  text-align: center;
+  top: 11px;
+  width: 20px;
+  height: 20px
 }
