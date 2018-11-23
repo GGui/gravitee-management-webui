@@ -56,6 +56,7 @@ const PageSidenavDirective: ng.IDirective = ({
       if (content !== undefined) {
         let h1Elements = content.querySelectorAll('h1');
         let h2Elements = content.querySelectorAll('h2');
+        let sectionElements = content.querySelectorAll('section');
 
         /*
         //TODO: create an intermediate section to activate sidenav item
@@ -80,10 +81,12 @@ const PageSidenavDirective: ng.IDirective = ({
           }
         });
         */
+      /* let hash = window.location.hash.split('#').pop(1);
+       console.info("hash: " + hash);*/
 
         scope.anchors = _.map(h2Elements, function (elt) {
           elt.id = elt.textContent.replace(new RegExp(' ', 'g'), '').toLowerCase();
-          return {id: elt.id, title: elt.textContent, elt: elt};
+          return {id: elt.id, title: elt.textContent, elt: content.querySelector('section.'+elt.id)};
         });
 
         scope.scrollTo = function (anchor) {
