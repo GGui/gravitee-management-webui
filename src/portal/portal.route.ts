@@ -79,11 +79,11 @@ function portalRouterConfig($stateProvider) {
             return PortalService.searchApis($stateParams.q);
           }
           if ($stateParams.view) {
-            return ApiService.list($stateParams.view);
+            return ApiService.list($stateParams.view, true);
           }
           return ViewService.getDefaultOrFirstOne().then(response => {
             if (response) {
-              return ApiService.list(response.id);
+              return ApiService.list(response.id, true);
             } else {
               return [];
             }
@@ -97,7 +97,9 @@ function portalRouterConfig($stateProvider) {
       },
       params: {
         view: undefined,
-        q: undefined
+        q: {
+          dynamic: true
+        }
       }
     })
     .state('portal.views', {
@@ -116,7 +118,7 @@ function portalRouterConfig($stateProvider) {
       controllerAs: 'viewCtrl',
       resolve: {
         resolvedView: ($stateParams, ViewService: ViewService) => ViewService.get($stateParams.viewId),
-        resolvedApis: ($stateParams, ApiService:ApiService) => ApiService.list($stateParams.viewId)
+        resolvedApis: ($stateParams, ApiService:ApiService) => ApiService.list($stateParams.viewId, true)
       }
     })
     .state('portal.api', {
@@ -221,7 +223,7 @@ function portalRouterConfig($stateProvider) {
       component: 'portalPage',
       resolve: {
         page: ($stateParams, DocumentationService: DocumentationService) =>
-          DocumentationService.get2($stateParams['pageId']).then(response => response.data)
+          DocumentationService.get(null, $stateParams['pageId'], true).then(response => response.data)
       },
       params: {
         pageId: {

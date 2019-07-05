@@ -45,7 +45,6 @@ import HttpConfigurationComponent from '../management/api/proxy/backend/endpoint
 import AddPoliciesPathController from '../management/api/design/policies/addPoliciesPath.controller';
 import ApiResourcesController from '../management/api/design/resources/resources.controller';
 import ApiPathMappingsController from '../management/api/analytics/pathMappings/pathMappings.controller';
-import NewApiController from '../management/api/creation/newApi.controller';
 import ApiPropertiesController from '../management/api/design/properties/properties.controller';
 import ApiEventsController from '../management/api/audit/events/apiEvents.controller';
 import ApiHistoryController from '../management/api/audit/history/apiHistory.controller';
@@ -81,6 +80,8 @@ import ApiCreationStep2Component from '../management/api/creation/steps/api-crea
 import ApiCreationStep3Component from '../management/api/creation/steps/api-creation-step3.component';
 import ApiCreationStep4Component from '../management/api/creation/steps/api-creation-step4.component';
 import ApiCreationStep5Component from '../management/api/creation/steps/api-creation-step5.component';
+import ApiImportComponent from '../management/components/import/import-api.component';
+
 // API Plan
 import ApiPlanComponent from '../management/api/api-plan.component';
 import ApiEditPlanController from '../management/api/portal/plans/plan/edit-plan.controller';
@@ -99,7 +100,14 @@ import ApiSubscriptionComponent from '../management/api/portal/subscriptions/sub
 import ApplicationService from '../services/application.service';
 import ApplicationsComponent from './application/applications.component';
 import ApplicationsController from './application/applications.controller';
-import CreateApplicationsComponent from './application/create-application.component';
+
+import ApplicationCreationComponent from './application/creation/steps/application-creation.component';
+import ApplicationCreationController from './application/creation/steps/application-creation.controller';
+import ApplicationCreationStep1Component from './application/creation/steps/application-creation-step1.component';
+import ApplicationCreationStep2Component from './application/creation/steps/application-creation-step2.component';
+import ApplicationCreationStep3Component from './application/creation/steps/application-creation-step3.component';
+import ApplicationCreationStep4Component from './application/creation/steps/application-creation-step4.component';
+
 import ApplicationComponent from './application/details/application.component';
 import ApplicationHeaderComponent from './application/details/header/application-header.component';
 import ApplicationGeneralController from './application/details/general/application-general.controller';
@@ -132,6 +140,7 @@ import WidgetComponent from '../components/widget/widget.component';
 import WidgetDataTableComponent from '../components/widget/widget-data-table.component';
 import WidgetChartLineComponent from '../components/widget/widget-chart-line.component';
 import WidgetChartPieComponent from '../components/widget/widget-chart-pie.component';
+import WidgetChartMapComponent from '../components/widget/widget-chart-map.component';
 import DashboardComponent from '../components/dashboard/dashboard.component';
 import DashboardFilterComponent from '../components/dashboard/dashboard-filter.component';
 import DashboardFilterController from '../components/dashboard/dashboard-filter.controller';
@@ -265,6 +274,8 @@ import DialogAssertionInformationController
 import ApiHealthCheckController from '../management/api/proxy/backend/healthcheck/healthcheck.controller';
 import ProgressBarComponent from '../components/progressbar/progress-bar.component';
 import ApiHealthCheckLogController from '../management/api/proxy/backend/healthcheck/healthcheck-log.controller';
+import HealthCheckMetricComponent from '../components/healthcheckmetric/healthcheck-metric.component';
+
 // Ticket
 import TicketService from '../services/ticket.service';
 import SupportTicketController from '../support/ticket.controller';
@@ -386,6 +397,10 @@ import ClientRegistrationProviderController from '../management/configuration/ap
 import angular = require('angular');
 
 import ngInfiniteScroll = require('ng-infinite-scroll');
+import DialogReviewController from "./api/review/reviewDialog.controller";
+import DialogRequestForChangesController from "./api/portal/general/dialog/requestForChanges.controller";
+import ApplicationSubscribeComponent from "./application/details/subscribe/application-subscribe.component";
+import ApplicationSubscribeController from "./application/details/subscribe/application-subscribe.controller";
 
 (<any>window).traverse = traverse;
 
@@ -456,13 +471,18 @@ require('angular-loading-bar');
 // Highcharts
 
 const Highcharts = require('highcharts');
+(<any>window).Highcharts = Highcharts;
 const HighchartsMore = require('../../node_modules/highcharts/js/highcharts-more.js');
 const SolidGauge = require('../../node_modules/highcharts/js/modules/solid-gauge.js');
 const NoDataToDisplay = require('../../node_modules/highcharts/js/modules/no-data-to-display.js');
+const Map = require('../../node_modules/highcharts/js/modules/map.js');
 
 HighchartsMore(Highcharts);
 SolidGauge(Highcharts);
 NoDataToDisplay(Highcharts);
+Map(Highcharts);
+
+require('../../node_modules/@highcharts/map-collection/custom/world.js');
 
 (<any>window).jsyaml = jsyaml;
 
@@ -543,7 +563,6 @@ angular.module('gravitee-management', [uiRouter, permission, uiPermission, 'ngMa
   .controller('ApiPathMappingsController', ApiPathMappingsController)
   .controller('DialogAddPathMappingController', DialogAddPathMappingController)
   .controller('DialogImportPathMappingController', DialogImportPathMappingController)
-  .controller('NewApiController', NewApiController)
   .controller('DialogAddPropertyController', DialogAddPropertyController)
   .controller('DialogAddMemberApiController', DialogAddMemberApiController)
   .controller('DialogTransferApiController', DialogTransferApiController)
@@ -596,6 +615,8 @@ angular.module('gravitee-management', [uiRouter, permission, uiPermission, 'ngMa
   .controller('AddTopApiDialogController', AddTopApiDialogController)
   .controller('DeleteTopApiDialogController', DeleteTopApiDialogController)
   .controller("MoveToFolderDialogController", MoveToFolderDialogController)
+  .controller('DialogReviewController', DialogReviewController)
+  .controller('DialogRequestForChangesController', DialogRequestForChangesController)
   .service('ApplicationService', ApplicationService)
   .service('ApiService', ApiService)
   .service('DocumentationService', DocumentationService)
@@ -637,6 +658,7 @@ angular.module('gravitee-management', [uiRouter, permission, uiPermission, 'ngMa
   .component('gvWidgetDataTable', WidgetDataTableComponent)
   .component('gvWidgetChartPie', WidgetChartPieComponent)
   .component('gvWidgetChartLine', WidgetChartLineComponent)
+  .component('gvWidgetChartMap', WidgetChartMapComponent)
 
   .component('views', ViewsComponent)
   .component('view', ViewComponent)
@@ -665,6 +687,7 @@ angular.module('gravitee-management', [uiRouter, permission, uiPermission, 'ngMa
   .component('apiCreationStep3', ApiCreationStep3Component)
   .component('apiCreationStep4', ApiCreationStep4Component)
   .component('apiCreationStep5', ApiCreationStep5Component)
+  .component('gvApiImport', ApiImportComponent)
   .component('apiMetadata', ApiMetadataComponent)
   .component('gvDashboard', DashboardComponent)
   .component('gvDashboardFilter', DashboardFilterComponent)
@@ -689,7 +712,17 @@ angular.module('gravitee-management', [uiRouter, permission, uiPermission, 'ngMa
 
   .component('applications', ApplicationsComponent)
   .component('application', ApplicationComponent)
-  .component('createApplication', CreateApplicationsComponent)
+
+  .component('applicationSubscribe', ApplicationSubscribeComponent)
+  .controller('ApplicationSubscribeController', ApplicationSubscribeController)
+
+  .component('createApplication', ApplicationCreationComponent)
+  .controller('ApplicationCreationController', ApplicationCreationController)
+  .component('applicationCreationStep1', ApplicationCreationStep1Component)
+  .component('applicationCreationStep2', ApplicationCreationStep2Component)
+  .component('applicationCreationStep3', ApplicationCreationStep3Component)
+  .component('applicationCreationStep4', ApplicationCreationStep4Component)
+
   .component('applicationHeader', ApplicationHeaderComponent)
   .component('applicationGeneral', ApplicationGeneralComponent)
   .component('applicationSubscriptions', ApplicationSubscriptionsComponent)
@@ -753,6 +786,7 @@ angular.module('gravitee-management', [uiRouter, permission, uiPermission, 'ngMa
   .controller('ApiHealthCheckConfigureController', ApiHealthCheckConfigureController)
   .controller('ApiHealthCheckLogController', ApiHealthCheckLogController)
   .component('progressBar', ProgressBarComponent)
+  .component('gvHealthcheckMetric', HealthCheckMetricComponent)
 
   // Response Templates
   .controller('ApiResponseTemplatesController', ApiResponseTemplatesController)
@@ -844,5 +878,10 @@ angular.module('gravitee-management', [uiRouter, permission, uiPermission, 'ngMa
   .filter('apiKeyFilter', function () {
     return function (keys) {
       return keys;
+    };
+  })
+  .filter('floor', function() {
+    return function (input) {
+      return Math.floor(input);
     };
   });

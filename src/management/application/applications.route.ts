@@ -19,6 +19,8 @@ import * as _ from 'lodash';
 import UserService from "../../services/user.service";
 import {StateParams} from '@uirouter/core';
 import ApiService from "../../services/api.service";
+import TenantService from "../../services/tenant.service";
+import TagService from "../../services/tag.service";
 
 export default applicationsConfig;
 
@@ -51,6 +53,9 @@ function applicationsConfig($stateProvider) {
     .state('management.applications.create', {
       url: '/create',
       component: 'createApplication',
+      resolve: {
+        apis: (ApiService: ApiService) => ApiService.list(null, true).then(response => response.data)
+      },
       data: {
         perms: {
           only: ['portal-application-c']
@@ -59,9 +64,6 @@ function applicationsConfig($stateProvider) {
         docs: {
           page: 'management-create-application'
         }
-      },
-      resolve: {
-        applications: (ApplicationService: ApplicationService) => ApplicationService.list().then(response => response.data)
       }
     })
     .state('management.applications.application', {
@@ -102,13 +104,9 @@ function applicationsConfig($stateProvider) {
       },
       resolve: {
         groups: (UserService: UserService, GroupService: GroupService) => {
-          if (UserService.currentUser.isAdmin()) {
-            return GroupService.list().then((groups) => {
-              return groups.data;
-            });
-          } else {
-            return [];
-          }
+          return GroupService.list().then((groups) => {
+            return  _.filter(groups.data, "manageable");
+          });
         }
       }
     })
@@ -154,6 +152,21 @@ function applicationsConfig($stateProvider) {
         },
         docs: {
           page: 'management-application-subscriptions'
+        }
+      }
+    })
+    .state('management.applications.application.subscriptions.subscribe', {
+      url: '/subscribe',
+      component: 'applicationSubscribe',
+      resolve: {
+        apis: (ApiService: ApiService) => ApiService.list(null, true).then(response => response.data),
+        subscriptions: ($stateParams, ApplicationService: ApplicationService) =>
+          ApplicationService.listSubscriptions($stateParams.applicationId).then(response => response.data)
+      },
+      data: {
+        devMode: true,
+        perms: {
+          only: ['application-subscription-r']
         }
       }
     })
@@ -215,7 +228,7 @@ function applicationsConfig($stateProvider) {
       }
     })
     .state('management.applications.application.logs', {
-      url: '/logs?from&to&q',
+      url: '/logs?from&to&q&page&size',
       component: 'applicationLogs',
       data: {
         menu: {
@@ -242,6 +255,14 @@ function applicationsConfig($stateProvider) {
         q: {
           type: 'string',
           dynamic: true
+        },
+        page: {
+          type: 'int',
+          dynamic: true
+        },
+        size: {
+          type: 'int',
+          dynamic: true
         }
       },
       resolve: {
@@ -250,7 +271,7 @@ function applicationsConfig($stateProvider) {
       }
     })
     .state('management.applications.application.log', {
-      url: '/logs/:logId?timestamp&from&to&q',
+      url: '/logs/:logId?timestamp&from&to&q&page&size',
       component: 'applicationLog',
       resolve: {
         log: ($stateParams, ApplicationService: ApplicationService) =>

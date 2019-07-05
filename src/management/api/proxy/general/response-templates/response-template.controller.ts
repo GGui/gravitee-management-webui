@@ -69,8 +69,31 @@ class ApiResponseTemplateController {
       'RATE_LIMIT_TOO_MANY_REQUESTS',
       'REQUEST_CONTENT_LIMIT_TOO_LARGE',
       'REQUEST_CONTENT_LIMIT_LENGTH_REQUIRED',
+      'REQUEST_TIMEOUT',
       'REQUEST_VALIDATION_INVALID',
       'RESOURCE_FILTERING_FORBIDDEN',
+      'RBAC_FORBIDDEN',
+      'RBAC_INVALID_USER_ROLES',
+      'RBAC_NO_USER_ROLE',
+      'OAUTH2_MISSING_SERVER',
+      'OAUTH2_MISSING_HEADER',
+      'OAUTH2_MISSING_ACCESS_TOKEN',
+      'OAUTH2_INVALID_ACCESS_TOKEN',
+      'OAUTH2_INVALID_SERVER_RESPONSE',
+      'OAUTH2_INSUFFICIENT_SCOPE',
+      'OAUTH2_SERVER_UNAVAILABLE',
+      'JWT_MISSING_TOKEN',
+      'JWT_INVALID_TOKEN',
+      'JSON_INVALID_PAYLOAD',
+      'JSON_INVALID_FORMAT',
+      'GATEWAY_INVALID_REQUEST',
+      'GATEWAY_INVALID_RESPONSE',
+      'GATEWAY_OAUTH2_ACCESS_DENIED',
+      'GATEWAY_OAUTH2_SERVER_ERROR',
+      'GATEWAY_OAUTH2_INVALID_CLIENT',
+      'GATEWAY_MISSING_SECURITY_PROVIDER',
+      'GATEWAY_POLICY_INTERNAL_ERROR',
+      'GATEWAY_MISSING_SECURED_REQUEST_PLAN'
     ];
 
     // In case of a new response template, initialize with default media type
@@ -86,7 +109,7 @@ class ApiResponseTemplateController {
   querySearchTemplateKey (query) {
     let keys = query ? this.keys.filter(this.createFilterForTemplateKey(query)) : this.keys;
     if (query && !_.includes(keys, query)) {
-      keys.push(query);
+      this.selectedTemplateKey = query;
     }
     return keys;
   }

@@ -55,6 +55,11 @@ class ApiHealthCheckConfigureController {
         this.healthcheck = this.endpoint.healthcheck;
       }
     } else {
+      // Health-check for all endpoint
+      if(this.api.proxy.groups.length == 1 && this.api.proxy.groups[0].endpoints.length == 1) {
+        this.endpoint = this.api.proxy.groups[0].endpoints[0];
+      }
+
       this.healthcheck = this.api.services && this.api.services['health-check'];
     }
 
@@ -138,10 +143,23 @@ class ApiHealthCheckConfigureController {
   buildRequest() {
     let request = "";
 
-    request += (this.healthcheck.steps && this.healthcheck.steps[0].request.method) || "{method}";
-    request += " " + ((this.endpoint) ? this.endpoint.target : "{endpoint}");
-    request += (this.healthcheck.steps && this.healthcheck.steps[0].request.path) || "/{path}";
-    request += (this.healthcheck.steps && this.healthcheck.steps[0].request.fromRoot) ? ' (without endpoint path)' : '';
+    request += ((this.healthcheck.steps && this.healthcheck.steps[0].request.method) + " ") || "{method} ";
+
+    if ( this.healthcheck.steps && this.healthcheck.steps[0].request.fromRoot ) {
+      if ( this.endpoint ) {
+        try {
+          request += new URL(this.endpoint.target).origin;
+        } catch (e) {
+          request += this.endpoint.target;
+        }
+      } else {
+        request += "{endpoint}";
+      }
+      request += (this.healthcheck.steps && this.healthcheck.steps[0].request.path) || "/{path}";
+    } else {
+      request += ((this.endpoint) ? this.endpoint.target : "{endpoint}");
+      request += (this.healthcheck.steps && this.healthcheck.steps[0].request.path) || "/{path}";
+    }
 
     return request;
   }

@@ -17,10 +17,7 @@
 -->
 <form name="formApplication" ng-submit="$ctrl.update()" novalidate>
   <div class="gv-forms" layout="column" permission permission-only="'application-definition-r'">
-    <h1>{{$ctrl.application.name}}
-      <small ng-if="$ctrl.application.type" style="color:grey;">( {{$ctrl.application.type}} )</small>
-    </h1>
-
+    <application-header application="$ctrl.application"></application-header>
     <div class="gv-form">
       <h2>General</h2>
       <div class="gv-form-content" layout="column">
@@ -116,6 +113,14 @@
                         ngclipboard-success="$ctrl.onCopyClientSecretSuccess(e);" role="button">
             </ng-md-icon>
           </span>
+
+          <md-button class="md-raised md-primary" type="button"
+                     style="height: 36px"
+                     ng-if="$ctrl.application.settings.oauth.renew_client_secret_supported"
+                     ng-click="$ctrl.renewClientSecret($event)"
+                     permission permission-only="'application-definition-u'">
+            Renew secret
+          </md-button>
         </div>
 
         <md-input-container class="md-block">
@@ -131,11 +136,11 @@
             </md-option>
           </md-select>
           <div class="hint">
-            Grant types allowed for the client. Please try to set only grant types you need for security reasons.
+            Grant types allowed for the client. Please set only grant types you need for security reasons.
           </div>
         </md-input-container>
 
-        <md-input-container class="md-block">
+        <md-input-container class="md-block" ng-if="$ctrl.applicationType.oauth.requires_redirect_uris">
           <label>Redirect URIs</label>
           <md-chips required
                     ng-model="$ctrl.application.settings.oauth.redirect_uris"

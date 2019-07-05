@@ -15,7 +15,8 @@
  */
 const ApplicationHeaderComponent: ng.IComponentOptions = {
   bindings: {
-    application: "<"
+    application: '<',
+    hideSubscribeLink: '<'
   },
   template: require("./application-header.html")
 };

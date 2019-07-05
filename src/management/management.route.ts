@@ -97,7 +97,7 @@ function managementRouterConfig($stateProvider) {
       }
     })
     .state('management.platform', {
-      url: '/platform?from&to&q',
+      url: '/platform?from&to&q&dashboard',
       template: require('./platform/dashboard/dashboard.html'),
       controller: 'DashboardController',
       controllerAs: 'dashboardCtrl',
@@ -127,6 +127,9 @@ function managementRouterConfig($stateProvider) {
         q: {
           type: 'string',
           dynamic: true
+        },
+        dashboard: {
+          type: 'string'
         }
       }
     })
